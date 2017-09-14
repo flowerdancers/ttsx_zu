@@ -21,3 +21,7 @@ class GoodsInfo(models.Model):
     gtype = models.ForeignKey(TypeInfo)
     def __str__(self):
         return self.gtitle
+
+
+
+

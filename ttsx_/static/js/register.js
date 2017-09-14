@@ -97,7 +97,7 @@ $(function(){
 		}
 		else
 		{
-			$('#email').next().html('你输入的邮箱格式不正确')
+			$('#email').next().html('你输入的邮箱格式不正确');
 			$('#email').next().show();
 			error_check_password = true;
 		}
@@ -117,7 +117,9 @@ $(function(){
 		}
 		else
 		{
+			alert('请输检查注册信息');
 			return false;
+
 		}
 
 	});
@@ -129,4 +131,4 @@ $(function(){
 
 
 
-})
+});
