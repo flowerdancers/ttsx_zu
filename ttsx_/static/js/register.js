@@ -1,132 +1,181 @@
-$(function(){
+$(function () {
+    var $userName = $("#user_name");
+    var $pwd = $("#pwd");
+    var $cpwd = $("#cpwd");
+    var $email = $("#email");
+    var $allow = $("#allow");
 
-	var error_name = false;
-	var error_password = false;
-	var error_check_password = false;
-	var error_email = false;
-	var error_check = false;
+    var is_error_username = true;
+    var is_error_pwd = true;
+    var is_error_cpwd = true;
+    var is_error_email = true;
+    var is_error_allow = false;
 
+    // 数字字母或下划线6到20位
+    var reg_name = /^\w{6,20}$/;
+    var reg_psw = /^[\w!@#$%^&*]{6,20}$/;
 
-	$('#user_name').blur(function() {
-		check_user_name();
-	});
+    // 6~18个字符，可使用字母、数字、下划线，需以字母开头
 
-	$('#pwd').blur(function() {
-		check_pwd();
-	});
-
-	$('#cpwd').blur(function() {
-		check_cpwd();
-	});
-
-	$('#email').blur(function() {
-		check_email();
-	});
-
-	$('#allow').click(function() {
-		if($(this).is(':checked'))
-		{
-			error_check = false;
-			$(this).siblings('span').hide();
-		}
-		else
-		{
-			error_check = true;
-			$(this).siblings('span').html('请勾选同意');
-			$(this).siblings('span').show();
-		}
-	});
+    var reg_email = /^[A-Za-z0-9]\w{4,16}[A-Za-z0-9]@[a-z0-9]+(\.[a-z]{2,5}){1,2}$/i;
 
 
-	function check_user_name(){
-		var len = $('#user_name').val().length;
-		if(len<5||len>20)
-		{
-			$('#user_name').next().html('请输入5-20个字符的用户名')
-			$('#user_name').next().show();
-			error_name = true;
-		}
-		else
-		{
-			$('#user_name').next().hide();
-			error_name = false;
-		}
-	}
+    //-----------------------------------------------------验证用户名
+    $userName.blur(function () {
+        //验证用户名
+        checkUserName();
+    });
+    $userName.focus(function () {
+        //获取焦点 隐藏提示
+        $(this).next().hide();
+    });
 
-	function check_pwd(){
-		var len = $('#pwd').val().length;
-		if(len<8||len>20)
-		{
-			$('#pwd').next().html('密码最少8位，最长20位')
-			$('#pwd').next().show();
-			error_password = true;
-		}
-		else
-		{
-			$('#pwd').next().hide();
-			error_password = false;
-		}		
-	}
+    //用户重名判断
+    function checkIsName() {
+        var username = $userName.val();
+         $.ajax({
+            url:'/user/has_user/',
+            type:'get',
+            dataType:'json',
+            data:{'uname':username},
+            success:function (data) {
+                if (data.reg_name){
+                    $('#user_name').next().html('用户名已存在！').show();
+                    is_error_username = true;
+                }
+                else {
+                    $('#user_name').next().hide();
+                    is_error_username = false;
+                }
 
+            }
+        })
+    }
 
-	function check_cpwd(){
-		var pass = $('#pwd').val();
-		var cpass = $('#cpwd').val();
+    //验证用户名
+    function checkUserName() {
+        // console.log("checkUserName");
+        var username = $userName.val();
+        if (username == "") {
+            $userName.next().html("用户名不能为空").show();
+            is_error_username = true;
+            return;
+        }
+        if (reg_name.test(username)) {
+            checkIsName();
+        } else {
+            $userName.next().html("用户名6到20位数字字母或下划线").show();
+            is_error_username = true;
+        }
 
-		if(pass!=cpass)
-		{
-			$('#cpwd').next().html('两次输入的密码不一致')
-			$('#cpwd').next().show();
-			error_check_password = true;
-		}
-		else
-		{
-			$('#cpwd').next().hide();
-			error_check_password = false;
-		}		
-		
-	}
+    }
+    //-----------------------------------------------------验证密码
 
-	function check_email(){
-		var re = /^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$/;
+    $pwd.focus(function () {
+        $pwd.next().hide();
+    });
+    $pwd.blur(function () {
+        checkPsw();
+    });
 
-		if(re.test($('#email').val()))
-		{
-			$('#email').next().hide();
-			error_email = false;
-		}
-		else
-		{
-			$('#email').next().html('你输入的邮箱格式不正确')
-			$('#email').next().show();
-			error_check_password = true;
-		}
+    function checkPsw() {
+        var psw = $pwd.val();
+        if (psw == "") {
+            $pwd.next().html("密码不能为空").show();
+            is_error_pwd = true;
+            return;
+        }
 
-	}
-
-
-	$('#reg_form').submit(function() {
-		check_user_name();
-		check_pwd();
-		check_cpwd();
-		check_email();
-
-		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-
-	});
+        if (reg_psw.test(psw)) {
+            is_error_pwd = false;
+        } else {
+            $pwd.next().html("密码是6到20位数字字母下划线和!@#$%^&*").show();
+            is_error_pwd = true;
+        }
+    }
+    //-----------------------------------------------------验证重复密码
 
 
+    $cpwd.focus(function () {
+        $cpwd.next().hide();
+    });
 
 
+    $cpwd.blur(function () {
+        checkCPsw();
+    });
+
+    function checkCPsw() {
+        var psw = $pwd.val();
+        var cpwd = $cpwd.val();
+        if (cpwd != psw) {
+            $cpwd.next().html("两次密码不一致").show();
+            is_error_cpwd = true;
+        } else {
+            is_error_cpwd = false;
+        }
+    }
 
 
+    //-----------------------------------------------------验证邮箱
+
+    $email.focus(function () {
+        $email.next().hide();
+    });
+    $email.blur(function () {
+        checkEmail();
+    });
 
 
-})
+    function checkEmail() {
+        var email = $email.val();
+        if (email == "") {
+            $email.next().html("邮箱不能为空").show();
+            is_error_email = true;
+            return;
+        }
+        if (reg_email.test(email)) {
+            is_error_email = false
+
+        } else {
+            $email.next().html("邮箱格式错误").show();
+            is_error_email = true;
+        }
+    }
+
+    //-------------------------------checkbox验证
+
+    $allow.click(function () {
+        // var isChecked = $allow.prop("checked");
+        var isChecked = $allow.is(":checked");
+        if (isChecked) {
+            $allow.siblings("span").hide();
+            is_error_allow = false;
+        } else {
+            $allow.siblings("span").html("必须勾选").show();
+            is_error_allow = true;
+        }
+
+    });
+
+    // 表单的提交事件
+    $("#myform").submit(function () {
+        console.log("myform");
+        checkUserName();
+        checkPsw();
+        checkCPsw();
+        checkEmail();
+//
+        if (is_error_username || is_error_pwd || is_error_cpwd || is_error_email || is_error_allow) {
+            //  有一个表单有错误 就不提交
+            console.log("false");
+            return false;
+        } else {
+            console.log("true");
+            return true;
+        }
+
+    })
+
+
+});

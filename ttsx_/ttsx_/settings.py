@@ -37,17 +37,19 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tt_user',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'tt_user.middleware.UrlMiddleWare',
 )
 
 ROOT_URLCONF = 'ttsx_.urls'
@@ -109,3 +111,12 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
 MEDIA_ROOT=os.path.join(BASE_DIR,'static/media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'python01zt@163.com'
+EMAIL_HOST_PASSWORD = 'python01zt'
+EMAIL_FROM = 'python<python01zt@163.com>'
+
+# SESSION_ENGINE='django.contrib.sessions.backends.cached_db'
