@@ -4,12 +4,15 @@
 $(function () {
     var is_error_name = true;
     var is_error_password = true;
+    var is_error_yzm = true;
 
     var reg_username = /^\w{6,20}$/;
     var reg_pwd = /^[\w!@#$%^&*]{6,20}$/;
+    var reg_yzm = /^[a-zA-Z0-9]{4}$/;
 
-    var $name_input = $('#n_input');
-    var $pass_input = $('#p_input');
+    var $name_input = $('#username');
+    var $pass_input = $('#pwd');
+    var $yzm = $('#yzm');
 
     //判断用户名是否正确
     $name_input.focus(function () {
@@ -30,6 +33,7 @@ $(function () {
         check_pwd();
     });
 
+
     //判断用户是否存在
     function checkIsName() {
         var username = $name_input.val();
@@ -40,11 +44,11 @@ $(function () {
             data:{'uname':username},
             success:function (data) {
                 if (data.reg_name){
-                    $('#n_input').next().hide();
+                    $('#username').next().hide();
                     is_error_name = false;
                 }
                 else {
-                    $('#n_input').next().html('不存在的用户名,请先前往注册页面注册！').show();
+                    $('#username').next().html('不存在的用户名,请先前往注册页面注册！').show();
 
                     is_error_name = true;
                 }
@@ -96,8 +100,9 @@ $(function () {
     $('#myform').submit(function () {
         check_pwd();
         check_username();
+        check_yzm();
 
-        if(is_error_password || is_error_name){
+        if(is_error_password || is_error_name || is_error_yzm){
             return false;
         } else {
             return true;

@@ -11,12 +11,14 @@ urlpatterns = [
     url('^login_handle/$',views.login_handle),
     url('^logout/$',views.logout),
     url('^close/$',views.close),
+    url('^yzm/$',views.verify_code),
+   
 
     url('^user_center_info/$',views.user_center_info),
     url('^user_center_order/$',views.user_center_order),
     url('^user_site/$',views.user_site),
     url('^user_center_site/$',views.user_center_site),
-    url('^index/$',views.index),
+    url('^$',views.index),
     url('^cart/$',views.cart),
 
 
